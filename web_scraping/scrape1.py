@@ -8,6 +8,7 @@ import pandas as pd
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from unidecode import unidecode
+# https://realpython.com/beautiful-soup-web-scraper-python/
 
 def remove_non_ascii(text):
     return ''.join([i if ord(i) < 128 else ' ' for i in text])
@@ -39,8 +40,8 @@ def writeNameObj(data):
 
 def pull1():
     URL = "https://www.thrillist.com/entertainment/nation/best-memes-of-all-time"
-    page = requests.get(URL)
     ML = []
+    page = requests.get(URL)
     data = getNameObj()
 
     soup = BeautifulSoup(page.content, 'html.parser')
@@ -96,13 +97,47 @@ def pull2():
         print(x)
     """
 
-def pull3():
-    URL = "https://www.thrillist.com/entertainment/nation/best-memes-of-all-time"
-    driver = webdriver.Chrome(URL)
-    content = driver.page_source
-    soup = BeautifulSoup(content)
+def pull4():
+    URL = "https://www.liveabout.com/internet-memes-that-have-won-our-hearts-3573553"
+    page = requests.get(URL)
+    soup = BeautifulSoup(page.content, 'html.parser')
+    results = soup.find(id="main")
+    data = getNameObj()
+    
+    tests = results.find_all('h2')
 
-    for a in soup.find_all('a', href=True, attrs={'class':'img--no-scale'}):
-        print(a)
+    for test in tests:
+        print(test.text)
+        data["names"].append(test.text)
 
-pull3()
+    writeNameObj(data)
+
+def pull5():
+    URL = "https://qz.com/1296094/most-popular-memes-finally-a-scientific-list-of-the-most-popular-memes-on-the-internet/"
+    page = requests.get(URL)
+    soup = BeautifulSoup(page.content, 'html.parser')
+    results = soup.find(id="root")
+    data = getNameObj()
+    tests = results.find_all('td')
+
+    for test in tests:
+        print(test.text)
+        data["names"].append(remove_non_ascii(test.text))
+
+    writeNameObj(data)
+
+def pull6():
+    URL = "https://www.buzzfeednews.com/article/katienotopoulos/memes-that-defined-the-2010s"
+    page = requests.get(URL)
+    soup = BeautifulSoup(page.content, 'html.parser')
+    results = soup.find(id="news-content")
+    data = getNameObj()
+    tests = results.find_all('span', class_='js-subbuzz__title-text')
+
+    for test in tests:
+        print(test.text)
+        data["names"].append(remove_non_ascii(test.text))
+
+    writeNameObj(data)
+
+pull6()
